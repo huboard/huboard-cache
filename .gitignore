@@ -1,0 +1,10 @@
+.fake/
+.paket/
+build
+deploy/
+# Build results
+packages/
+[Dd]ebug/
+[Rr]elease/
+
+xunit.html
