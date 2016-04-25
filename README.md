@@ -12,6 +12,12 @@ You will need a postgres database.
 
 ### Scripts
 
+#### Set Up Database
+
+In `~/migrations/up` are a set of SQL files you can run to construct the database
+
+You will need to run them as admin. they create the user and database.
+
 #### Compile Code
 
 `./build.sh`
@@ -21,3 +27,7 @@ You will need a postgres database.
 
 #### Run App
 `./run.sh`
+
+or
+
+`foreman start`
