@@ -9,9 +9,12 @@ open System.Dynamic
 open System.Linq
 open System.Collections.Generic
 
-
+let convertHerokuUrl(input : string ) : string = 
+    let urb = new System.UriBuilder(input)
+    let cs = (sprintf "User ID=%s;Password=%s;Host=%s;Port=%i;Database=%s;Pooling=false;" urb.UserName urb.Password urb.Host urb.Port urb.Path)
+    cs
+    
 let connectionString = System.Environment.GetEnvironmentVariable("PG") 
-
 
 //Should turn a map into a PGSQL HSTORE 'a=>1,b=>2'::hstore
 let serialize (headers:Map<string,string>) : string = 
@@ -53,7 +56,7 @@ let getFromDb (key:IssueKey) : FullPayload option =
     pp.Add("issue", key.issue)
               
     conn.Query<R>("SELECT headers::text AS Headers, payload AS Payload 
-                   FROM public.issues
+                   FROM github.issues
                    WHERE owner = @owner
                    AND repo = @repo
                    AND issue = @issue", p)
@@ -62,6 +65,7 @@ let getFromDb (key:IssueKey) : FullPayload option =
             let p = r.Payload
             Some {headers=h; payload=p}
             )
+
 
 let storeInDb (key:IssueKey, payload:FullPayload) : FullPayload = 
   use conn = new Npgsql.NpgsqlConnection(connectionString)
@@ -74,6 +78,6 @@ let storeInDb (key:IssueKey, payload:FullPayload) : FullPayload =
   pp.Add("issue", key.issue)
   pp.Add("headers", h)
   pp.Add("payload", payload.payload :> obj)
-  ignore <| conn.Execute("INSERT INTO public.issues (owner, repo, issue, headers, payload)
-                          VALUES (@owner, @repo, @issue, @headers::hstore, @payload::json)",p)
+  ignore <| conn.Execute("INSERT INTO github.issues (owner, repo, issue, headers, payload)
+                          VALUES (@owner, @repo, @issue, @headers::hstore, @payload::jsonb)",p)
   payload

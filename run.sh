@@ -1,6 +1,7 @@
 if [ -e ".env" ]
 then
     #do nothing
+    echo "hi"
 else
     #load default connection string
     echo "PG=User ID=hucache;Password=;Host=localhost;Port=5432;Database=hucache;
