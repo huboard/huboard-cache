@@ -43,6 +43,16 @@ Target "Deploy" (fun _ ->
         |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip")
 )
 
+Target "Watch" (fun _ ->
+    use watcher = (!! "build/*.dll") |> WatchChanges (fun changes -> 
+        tracefn "%A" changes
+        Run "Test")
+    
+    System.Console.ReadLine() |> ignore //Needed to keep FAKE from exiting
+
+    watcher.Dispose() // Use to stop the watch from elsewhere, ie another task.
+)
+
 // Build order
 "Clean"
   ==> "Build"
