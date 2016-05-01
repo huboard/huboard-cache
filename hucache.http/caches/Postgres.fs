@@ -9,12 +9,15 @@ open System.Dynamic
 open System.Linq
 open System.Collections.Generic
 
-let convertHerokuUrl(input : string ) : string = 
+let convertHerokuUrl (input : string ) : string = 
     let urb = new System.UriBuilder(input)
-    let cs = (sprintf "User ID=%s;Password=%s;Host=%s;Port=%i;Database=%s;Pooling=false;" urb.UserName urb.Password urb.Host urb.Port urb.Path)
+    let db = urb.Path.Replace("/","")
+    let cs = (sprintf "User ID=%s;Password=%s;Host=%s;Port=%i;Database=%s;Pooling=false;" urb.UserName urb.Password urb.Host urb.Port db)
     cs
     
-let connectionString = System.Environment.GetEnvironmentVariable("PG") 
+let connectionString = 
+    let raw = System.Environment.GetEnvironmentVariable("DATABASE_URL")
+    convertHerokuUrl raw
 
 //Should turn a map into a PGSQL HSTORE 'a=>1,b=>2'::hstore
 let serialize (headers:Map<string,string>) : string = 
