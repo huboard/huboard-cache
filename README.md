@@ -8,7 +8,8 @@ I'm using VSCode + Ionide
 npm install -g foreman
 ```
 
-You will need a postgres database.
+You will need a postgres database. By default the app looks for its connection string
+in the environment variable `DATABASE_URL`.
 
 #API
 
