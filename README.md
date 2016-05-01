@@ -4,7 +4,12 @@ You need mono `brew install mono`
 
 I'm using VSCode + Ionide
 
-You will need a postgres database.
+```
+npm install -g foreman
+```
+
+You will need a postgres database. By default the app looks for its connection string
+in the environment variable `DATABASE_URL`.
 
 #API
 
@@ -30,4 +35,8 @@ You will need to run them as admin. they create the user and database.
 
 or
 
-`foreman start`
+`foreman start` - if ruby based
+
+or 
+
+`nf start` - if node based
