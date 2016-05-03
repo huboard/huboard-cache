@@ -3,12 +3,17 @@ services:
   cache:
     build: .
     ports:
-      - "8080:8080"
+      - "5000:5000"
     volumes:
       - logvolume01:/var/log
     links:
     - postgres
+    environment:
+      - DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache
   postgres:
     image: postgres
+    environment:
+      - POSTGRES_PASSWORD=hucache
+      - POSTGRES_USER=hucache
 volumes:
   logvolume01: {}

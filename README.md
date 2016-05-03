@@ -44,3 +44,5 @@ or
 or
 
 `docker run -t -p 5000:5000 cache` (cache is what i named my docker image)
+
+Syntax note: in the `-p <host machine port>:<container port>`
