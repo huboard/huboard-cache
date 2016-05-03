@@ -4,8 +4,13 @@ then
     echo "hi"
 else
     #load default connection string
-    echo "DATABASE_URL=postgres://hucache:@localhost:5432/hucache" > .env
+    echo "DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache" > .env
 fi
 
-source .env
-mono ./build/hucache.http.exe
+if $0 == "docker"
+then
+    docker run -t -p 5000:5000 -e DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache cache
+else
+  source .env
+  mono ./build/hucache.http.exe
+fi
