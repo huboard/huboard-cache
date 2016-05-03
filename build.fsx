@@ -53,6 +53,12 @@ Target "Watch" (fun _ ->
     watcher.Dispose() // Use to stop the watch from elsewhere, ie another task.
 )
 
+Target "Docker" (fun _ ->
+    ExecProcess (fun info ->
+        info.FileName <- "docker"
+        info.Arguments <- "build -t cache ."
+        info.WorkingDirectory <- ".") (System.TimeSpan.FromMinutes 5.0) |> ignore
+)
 // Build order
 "Clean"
   ==> "Build"
