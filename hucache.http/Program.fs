@@ -18,9 +18,9 @@ module Program =
             pathScan "/cache/%s/%s/issues" getIssues ]]
 
   let port =
-      let couldParse, parsedInt = System.UInt16.TryParse(System.Environment.GetEnvironmentVariable("PORT"))
-      if couldParse then parsedInt
-      else 5000us
+      match System.UInt16.TryParse(System.Environment.GetEnvironmentVariable("PORT")) with
+      | true, parsedInt -> parsedInt
+      | false, _ -> 5000us
       
   let config =
     let ip = IPAddress.Parse "0.0.0.0"
