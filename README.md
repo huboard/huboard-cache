@@ -37,6 +37,10 @@ or
 
 `foreman start` - if ruby based
 
-or 
+or
 
 `nf start` - if node based
+
+or
+
+`docker run -t -p 5000:5000 cache` (cache is what i named my docker image)
