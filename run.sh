@@ -7,9 +7,9 @@ else
     echo "DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache" > .env
 fi
 
-if $0 == "docker"
+if [ $0 == "docker" ]
 then
-    docker run -t -p 5000:5000 -e DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache cache
+    docker run -t -p 5000:5000 --env-file ./.env cache
 else
   source .env
   mono ./build/hucache.http.exe
