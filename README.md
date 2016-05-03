@@ -30,6 +30,9 @@ You will need to run them as admin. they create the user and database.
 #### Run Tests
 `./build.sh test`
 
+### Build Docker Image
+`./build.sh docker`
+
 #### Run App
 `./run.sh`
 
@@ -46,3 +49,7 @@ or
 `docker run -t -p 5000:5000 cache` (cache is what i named my docker image)
 
 Syntax note: in the `-p <host machine port>:<container port>`
+
+or
+
+`./run.sh docker`
