@@ -1,8 +1,5 @@
-if [ -e ".env" ]
+if !([ -e ".env" ])
 then
-    #do nothing
-    echo "hi"
-else
     #load default connection string
     echo "DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache" > .env
 fi
