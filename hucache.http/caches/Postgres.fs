@@ -20,36 +20,28 @@ let connectionString =
     convertHerokuUrl raw
 
 //Should turn a map into a PGSQL HSTORE 'a=>1,b=>2'::hstore
-let serialize (headers:Map<string,string>) : string = 
-    headers
-    |> Seq.map (fun e ->
-        let vv = e.Value.Replace("W/","").Replace("\"","")
-        let v = (sprintf "\"%s\"=>\"%s\"" e.Key vv)
-        v)
-    |> String.concat ","
-    
-let s(arr:string[]) (i:int32): string = 
-    if((arr.Length - 1)>=i) then
-        arr.[i]
-    else
-        ""
-    
-//parses a "a=>1,b=>" into a Map<string, string>
-let deserialize (raw : string) : Map<string, string> =
+let serialize (headers:Map<string,string>) : Dictionary<string, string> =
+    let dict = new Dictionary<string, string>()
+    headers 
+    |> Map.iter (fun k v ->
+                 let vv = v.Replace("W/","").Replace("\"","")
+                 dict.Add(k, vv))
+    dict
+
+let deserialize (raw : IDictionary<string, string>) : Map<string, string> =
     match raw with 
     | null -> Map.empty
-    | r -> r.Trim().Split [|','|]
-                |> Seq.map (fun h -> Regex.Split(h, "=>"))
-                |> Seq.map (fun a -> ((s a 0), (s a 1)))
-                |> Map.ofSeq
+    | r -> (r :> seq<_>)
+           |> Seq.map (|KeyValue|)
+           |> Map.ofSeq
     
 
-type R(headers : string, payload : string) =
-    new() = R("","")
+type R(headers : IDictionary<string, string>, payload : string) =
+    new() = R(new Dictionary<string, string>(), "")
     member val Headers = headers with get, set
     member val Payload = payload with get, set
 
-let getFromDb (key:IssueKey) : FullPayload option = 
+let loadIssue (key:IssueKey) : FullPayload option = 
     use conn = new Npgsql.NpgsqlConnection(connectionString)
 
     let p = ExpandoObject() 
@@ -58,7 +50,7 @@ let getFromDb (key:IssueKey) : FullPayload option =
     pp.Add("repo", key.repo)
     pp.Add("issue", key.issue)
               
-    conn.Query<R>("SELECT headers::text AS Headers, payload AS Payload 
+    conn.Query<R>("SELECT headers AS Headers, payload AS Payload 
                    FROM github.issues
                    WHERE owner = @owner
                    AND repo = @repo
@@ -70,17 +62,20 @@ let getFromDb (key:IssueKey) : FullPayload option =
             )
 
 
-let storeInDb (key:IssueKey, payload:FullPayload) : FullPayload = 
+let storeIssue (key:IssueKey, payload:FullPayload) : FullPayload = 
   use conn = new Npgsql.NpgsqlConnection(connectionString)
   let h = serialize payload.headers
+  conn.Open() 
+  use cmd = conn.CreateCommand()
+  cmd.CommandText <- "INSERT INTO github.issues (owner, repo, issue, headers, payload)
+                    VALUES (@owner, @repo, @issue, @headers::hstore, @payload::jsonb)"
+  cmd.Parameters.Add("owner", NpgsqlTypes.NpgsqlDbType.Text).Value <- key.owner
+  cmd.Parameters.Add("repo", NpgsqlTypes.NpgsqlDbType.Text).Value <- key.repo
+  cmd.Parameters.Add("issue", NpgsqlTypes.NpgsqlDbType.Integer).Value <- key.issue
+  cmd.Parameters.Add("headers", NpgsqlTypes.NpgsqlDbType.Hstore).Value <- payload.headers
+  cmd.Parameters.Add("payload", NpgsqlTypes.NpgsqlDbType.Jsonb).Value <- payload.payload
+  
+  
+  cmd.ExecuteNonQuery() |> ignore
 
-  let p = ExpandoObject() 
-  let pp = p :> IDictionary<string, obj>
-  pp.Add("owner", key.owner)
-  pp.Add("repo", key.repo)
-  pp.Add("issue", key.issue)
-  pp.Add("headers", h)
-  pp.Add("payload", payload.payload :> obj)
-  ignore <| conn.Execute("INSERT INTO github.issues (owner, repo, issue, headers, payload)
-                          VALUES (@owner, @repo, @issue, @headers::hstore, @payload::jsonb)",p)
   payload
