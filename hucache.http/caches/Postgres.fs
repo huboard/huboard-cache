@@ -61,7 +61,25 @@ let loadIssue (key:IssueKey) : FullPayload option =
             Some {headers=h; payload=p}
             )
 
+let loadIssues (key:RepoKey) : FullPayload list =
+    use conn = new Npgsql.NpgsqlConnection(connectionString)
 
+    let p = ExpandoObject() 
+    let pp = p :> IDictionary<string, obj>
+    pp.Add("owner", key.owner)
+    pp.Add("repo", key.repo)
+              
+    conn.Query<R>("SELECT headers AS Headers, payload AS Payload 
+                   FROM github.issues
+                   WHERE owner = @owner
+                   AND repo = @repo", p)
+    |> Seq.map (fun r ->
+            let h = deserialize r.Headers
+            let p = r.Payload
+            {headers=h; payload=p}
+            ) 
+     |> Seq.toList
+    
 let storeIssue (key:IssueKey, payload:FullPayload) : FullPayload = 
   use conn = new Npgsql.NpgsqlConnection(connectionString)
   let h = serialize payload.headers
@@ -74,7 +92,6 @@ let storeIssue (key:IssueKey, payload:FullPayload) : FullPayload =
   cmd.Parameters.Add("issue", NpgsqlTypes.NpgsqlDbType.Integer).Value <- key.issue
   cmd.Parameters.Add("headers", NpgsqlTypes.NpgsqlDbType.Hstore).Value <- payload.headers
   cmd.Parameters.Add("payload", NpgsqlTypes.NpgsqlDbType.Jsonb).Value <- payload.payload
-  
   
   cmd.ExecuteNonQuery() |> ignore
 
