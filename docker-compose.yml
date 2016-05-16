@@ -15,5 +15,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=hucache
       - POSTGRES_USER=hucache
+    ports:
+    - "5433:5432"
 volumes:
   logvolume01: {}
