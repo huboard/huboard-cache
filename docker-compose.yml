@@ -9,7 +9,7 @@ services:
     links:
     - postgres
     environment:
-      - DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache
+      - DATABASE_URL=postgres://hucache:hucache@postgres:5432/hucache
   postgres:
     image: postgres
     environment:
