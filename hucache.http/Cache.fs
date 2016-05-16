@@ -4,7 +4,7 @@ open hucache.http.caches.postgres
 open hucache.http.types
 open hucache.http.github
 
-let lookup (key: IssueKey) : FullPayload option =
+let lookupIssue (key: IssueKey) : FullPayload option =
     match loadIssue key with
     | Some payload -> Some(payload)
     | None -> 
@@ -12,3 +12,8 @@ let lookup (key: IssueKey) : FullPayload option =
         match issue with 
         | Some i -> Some((storeIssue (key, i)))
         | None -> None
+
+let lookupIssues (key: RepoKey) : FullPayload list = 
+    match loadIssues key with 
+    | [] -> []
+    | i -> i 
