@@ -3,7 +3,7 @@ nuget FAKE
 nuget Suave 1.0.0
 nuget FSharp.Data 2.2.5
 nuget SQLProvider 1.0.0
-nuget Npgsql 3.0.5
+nuget Npgsql 3.0.7
 nuget Dapper 1.42.0
 nuget xunit 2.1.0
 nuget xunit.runner.console 2.0.0
