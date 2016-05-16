@@ -1,6 +1,5 @@
 module hucache.http.caches.postgres
 
-
 open Npgsql;
 open hucache.http.types
 open System.Text.RegularExpressions
@@ -41,6 +40,11 @@ type R(headers : IDictionary<string, string>, payload : string) =
     member val Headers = headers with get, set
     member val Payload = payload with get, set
 
+let hydrate (row:R) =
+    let h = deserialize row.Headers
+    let p = row.Payload
+    {headers=h; payload=p}
+    
 let loadIssue (key:IssueKey) : FullPayload option = 
     use conn = new Npgsql.NpgsqlConnection(connectionString)
 
@@ -55,11 +59,7 @@ let loadIssue (key:IssueKey) : FullPayload option =
                    WHERE owner = @owner
                    AND repo = @repo
                    AND issue = @issue", p)
-    |> Seq.tryPick (fun r ->
-            let h = deserialize r.Headers
-            let p = r.Payload
-            Some {headers=h; payload=p}
-            )
+    |> Seq.tryPick (hydrate >> Some)
 
 let loadIssues (key:RepoKey) : FullPayload list =
     use conn = new Npgsql.NpgsqlConnection(connectionString)
@@ -73,12 +73,8 @@ let loadIssues (key:RepoKey) : FullPayload list =
                    FROM github.issues
                    WHERE owner = @owner
                    AND repo = @repo", p)
-    |> Seq.map (fun r ->
-            let h = deserialize r.Headers
-            let p = r.Payload
-            {headers=h; payload=p}
-            ) 
-     |> Seq.toList
+    |> Seq.map hydrate 
+    |> Seq.toList
     
 let storeIssue (key:IssueKey, payload:FullPayload) : FullPayload = 
   use conn = new Npgsql.NpgsqlConnection(connectionString)
