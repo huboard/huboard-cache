@@ -25,6 +25,7 @@ module Program =
   let config =
     let ip = IPAddress.Parse "0.0.0.0"
     {defaultConfig with
+      logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
       bindings = [HttpBinding.mk HTTP ip port ] }
 
   [<EntryPoint>]
