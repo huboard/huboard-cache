@@ -14,7 +14,8 @@ module Program =
   let app =
     choose
       [ GET >=> choose
-          [ pathScan "/cache/%s/%s/issues/%d" getIssue
+          [ path "/" >=> OK "<html><body><h1>Welcome to HuCache!</h1></body></html>\n"
+            pathScan "/cache/%s/%s/issues/%d" getIssue
             pathScan "/cache/%s/%s/issues" getIssues ]]
 
   let port =
