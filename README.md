@@ -31,6 +31,14 @@ You will need to run them as admin. they create the user and database.
 `./build.sh test`
 
 ### Build Docker Image
+
+#### Setup Docker (OSX)
+
+`brew install boot2docker` (It's vagrant for Docker containers, uses the hosts docker binary in a tiny VM)
+`boot2docker init`
+`boot2docker up` (Follow the trailing instructions for ENV vars OR cert install)
+
+#### Build the docker image
 `./build.sh docker`
 
 #### Run App
