@@ -11,6 +11,18 @@ npm install -g foreman
 You will need a postgres database. By default the app looks for its connection string
 in the environment variable `DATABASE_URL`.
 
+
+### Docker Setup
+
+#### OSX
+
+`brew update`
+`brew install docker`
+`brew install boot2docker` (It's vagrant for Docker containers, uses hosts docker binary)
+`boot2docker init`
+`boot2docker up` (Follow the trailing instructions for ENV vars OR cert install)
+`docker build -f ./Dockerfile -t="cache" .` 
+
 #API
 
 `~/cache/<owner>/<repo>/issues/<issueid>` - gets and caches (forever) a github issue
