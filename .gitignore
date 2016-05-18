@@ -1,5 +1,9 @@
 .fake/
 .paket/
+.vs/
+*.suo
+*.user
+
 build
 deploy/
 # Build results
