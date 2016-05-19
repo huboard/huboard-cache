@@ -43,6 +43,14 @@ Target "Deploy" (fun _ ->
         |> Zip buildDir (deployDir + "ApplicationName." + version + ".zip")
 )
 
+Target "Migrate" (fun _ ->
+    Roundhouse (fun p -> { p with
+        SqlFilesDirectory = "./migrations"
+        ServerDatabase = "localhost"
+        DatabaseName = "hucache"
+        WarnOnOneTimeScriptChanges = true
+	})
+
 Target "Watch" (fun _ ->
     use watcher = (!! "build/*.dll") |> WatchChanges (fun changes -> 
         tracefn "%A" changes

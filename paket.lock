@@ -7,6 +7,7 @@ NUGET
     FSharp.Data (2.2.5)
       Zlib.Portable (>= 1.10) - framework: portable-net40+sl50+wp80+win80
     Npgsql (3.0.7)
+    roundhouse (0.8.6)
     SQLProvider (1.0)
     Suave (1.0)
       FSharp.Core (>= 3.1.2.5)

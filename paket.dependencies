@@ -1,5 +1,6 @@
 source https://www.nuget.org/api/v2
 nuget FAKE
+nuget roundhouse
 nuget Suave 1.0.0
 nuget FSharp.Data 2.2.5
 nuget SQLProvider 1.0.0
