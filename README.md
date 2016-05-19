@@ -55,7 +55,7 @@ or
 
 #### Setup Docker
 
-##### with Docker Beta (OSX)
+##### with Docker Beta
 
 Install the [Docker Beta](https://beta.docker.com/)
 
