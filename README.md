@@ -69,3 +69,18 @@ Install the [Docker Beta](https://beta.docker.com/)
 
 #### Build the docker image
 `./build.sh docker`
+
+### Docker Compose
+
+There is also a Docker compose file (`docker-compose.yml`) that can be used to spin up
+the postgres database for getting the full hosted experience.
+
+`docker-compose build`
+
+`docker-compose up`
+
+#### Ports
+
+`http://localhost:5000` for the website
+
+`postgresql://localhost:5433/hucache` for the postgres instance (Connect with username `huboard` and password `huboard`)
