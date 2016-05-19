@@ -2,6 +2,8 @@
 #r "./packages/FAKE/tools/FakeLib.dll"
 
 open Fake
+open Fake.EnvironmentHelper
+open Fake.RoundhouseHelper
 open Fake.Testing.XUnit2
 
 // Directories
@@ -44,12 +46,21 @@ Target "Deploy" (fun _ ->
 )
 
 Target "Migrate" (fun _ ->
+    let convertHerokuUrl (input : string ) : string = 
+      let urb = new System.UriBuilder(input)
+      let db = urb.Path.Replace("/","")
+      sprintf "User ID=%s;Password=%s;Host=%s;Port=%i;Database=%s;Pooling=false;" urb.UserName urb.Password urb.Host urb.Port db
+
+    environVars System.EnvironmentVariableTarget.Process |> List.iter (printf "%A")
     Roundhouse (fun p -> { p with
-        SqlFilesDirectory = "./migrations"
-        ServerDatabase = "localhost"
-        DatabaseName = "hucache"
-        WarnOnOneTimeScriptChanges = true
-	})
+                             ConnectionString = environVarOrFail "DATABASE_URL" |> convertHerokuUrl
+                             DatabaseType = "postgresql"
+                             SqlFilesDirectory = "./migrations"
+                             ServerDatabase = "localhost"
+                             DatabaseName = "hucache"
+                             WarnOnOneTimeScriptChanges = true
+      })
+    )
 
 Target "Watch" (fun _ ->
     use watcher = (!! "build/*.dll") |> WatchChanges (fun changes -> 
