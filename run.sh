@@ -1,9 +1,3 @@
-if !([ -e ".env" ])
-then
-    #load default connection string
-    echo "DATABASE_URL=postgres://hucache:hucache@localhost:5432/hucache" > .env
-fi
-
 if [ "$1" == "docker" ]
 then
     docker run -t -p 5000:5000 --env-file ./.env cache

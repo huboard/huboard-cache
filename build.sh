@@ -1,4 +1,9 @@
 #!/bin/bash
+if !([ -e ".env" ])
+then
+    cp .env.example .env
+fi
+
 if test "$OS" = "Windows_NT"
 then
   # use .Net
