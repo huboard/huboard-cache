@@ -14,7 +14,8 @@ module Program =
   let app =
     choose
       [ GET >=> choose
-          [ pathScan "/cache/%s/%s/issues/%d" getIssue
+          [ path "/" >=> OK "<html><body><h1>Welcome to HuCache!</h1></body></html>\n"
+            pathScan "/cache/%s/%s/issues/%d" getIssue
             pathScan "/cache/%s/%s/issues" getIssues ]]
 
   let port =
@@ -25,6 +26,7 @@ module Program =
   let config =
     let ip = IPAddress.Parse "0.0.0.0"
     {defaultConfig with
+      logger = Logging.Loggers.saneDefaultsFor Logging.LogLevel.Verbose
       bindings = [HttpBinding.mk HTTP ip port ] }
 
   [<EntryPoint>]
