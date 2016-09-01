@@ -59,6 +59,34 @@ Target "Docker" (fun _ ->
         info.Arguments <- "build -t cache ."
         info.WorkingDirectory <- ".") (System.TimeSpan.FromMinutes 5.0) |> ignore
 )
+
+Target "Migrations" (fun _ ->
+    ExecProcess (fun info ->
+        info.FileName <- "psql"
+        info.Arguments <- "-U postgres -f 0000_CreateLogin.sql"
+        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+
+    ExecProcess (fun info ->
+        info.FileName <- "psql"
+        info.Arguments <- "-U postgres -f 0001_CreateDatabase.sql"
+        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+
+    ExecProcess (fun info ->
+        info.FileName <- "psql"
+        info.Arguments <- "-U postgres -f 0002_InstallHstorea.sql"
+        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+
+    ExecProcess (fun info ->
+        info.FileName <- "psql"
+        info.Arguments <- "-U postgres -f 0003_CreateGithubSchema.sql"
+        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+
+    ExecProcess (fun info ->
+        info.FileName <- "psql"
+        info.Arguments <- "-U postgres -f 0004_CreateGithubIssues.sql"
+        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+)
+
 // Build order
 "Clean"
   ==> "Build"
