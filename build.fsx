@@ -73,7 +73,7 @@ Target "Migrations" (fun _ ->
 
     ExecProcess (fun info ->
         info.FileName <- "psql"
-        info.Arguments <- "-U postgres -f 0002_InstallHstorea.sql"
+        info.Arguments <- "-U postgres -f 0002_InstallHstore.sql"
         info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
 
     ExecProcess (fun info ->
