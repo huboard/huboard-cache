@@ -23,6 +23,12 @@ In `~/migrations/up` are a set of SQL files you can run to construct the databas
 
 You will need to run them as admin. they create the user and database.
 
+or
+
+Run them as 'postgres' user:
+
+`./build.sh migrations`
+
 #### Compile Code
 
 `./build.sh`
