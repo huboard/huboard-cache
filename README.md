@@ -59,13 +59,11 @@ or
 
 Install the [Docker Beta](https://beta.docker.com/)
 
-##### with boot2docker (OSX)
+or
 
-`brew install boot2docker` (It's vagrant for Docker containers, uses the hosts docker binary in a tiny VM)
+##### with Docker Toolbox
 
-`boot2docker init`
-
-`boot2docker up` (Follow the trailing instructions for ENV vars OR cert install)
+Install the [Docker Toolbox](https://www.docker.com/products/docker-toolbox)
 
 #### Build the docker image
 `./build.sh docker`
