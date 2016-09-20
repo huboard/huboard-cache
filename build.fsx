@@ -3,6 +3,7 @@
 
 open Fake
 open Fake.Testing.XUnit2
+open System.Text.RegularExpressions
 
 // Directories
 let buildDir  = "./build/"
@@ -61,30 +62,17 @@ Target "Docker" (fun _ ->
 )
 
 Target "Migrations" (fun _ ->
-    ExecProcess (fun info ->
-        info.FileName <- "psql"
-        info.Arguments <- "-U postgres -f 0000_CreateLogin.sql"
-        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
-
-    ExecProcess (fun info ->
-        info.FileName <- "psql"
-        info.Arguments <- "-U postgres -f 0001_CreateDatabase.sql"
-        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
-
-    ExecProcess (fun info ->
-        info.FileName <- "psql"
-        info.Arguments <- "-U postgres -f 0002_InstallHstore.sql"
-        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
-
-    ExecProcess (fun info ->
-        info.FileName <- "psql"
-        info.Arguments <- "-U postgres -f 0003_CreateGithubSchema.sql"
-        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
-
-    ExecProcess (fun info ->
-        info.FileName <- "psql"
-        info.Arguments <- "-U postgres -f 0004_CreateGithubIssues.sql"
-        info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+    !!("./migrations/up/**")
+    |> Seq.filter(fun filename ->
+        match filename with
+            | filename when filename.Contains(".sql") -> true
+            | _ -> false)
+    |> Seq.iter(fun (filename) ->
+        ExecProcess (fun info ->
+            info.FileName <- "psql"
+            info.Arguments <- sprintf "-U postgres -f %s" filename
+            info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+    )
 )
 
 // Build order
