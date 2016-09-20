@@ -3,7 +3,6 @@
 
 open Fake
 open Fake.Testing.XUnit2
-open System.Text.RegularExpressions
 
 // Directories
 let buildDir  = "./build/"
