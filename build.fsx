@@ -59,6 +59,21 @@ Target "Docker" (fun _ ->
         info.Arguments <- "build -t cache ."
         info.WorkingDirectory <- ".") (System.TimeSpan.FromMinutes 5.0) |> ignore
 )
+
+Target "Migrations" (fun _ ->
+    !!("./migrations/up/**")
+    |> Seq.filter(fun filename ->
+        match filename with
+            | filename when filename.Contains(".sql") -> true
+            | _ -> false)
+    |> Seq.iter(fun (filename) ->
+        ExecProcess (fun info ->
+            info.FileName <- "psql"
+            info.Arguments <- sprintf "-U postgres -f %s" filename
+            info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
+    )
+)
+
 // Build order
 "Clean"
   ==> "Build"
