@@ -69,7 +69,7 @@ Target "Migrations" (fun _ ->
     |> Seq.iter(fun (filename) ->
         ExecProcess (fun info ->
             info.FileName <- "psql"
-            info.Arguments <- sprintf "-U postgres -f %s" filename
+            info.Arguments <- sprintf "-U postgres -f %s -d hucache" filename
             info.WorkingDirectory <- "./migrations/up") (System.TimeSpan.FromMinutes 5.0) |> ignore
     )
 )
